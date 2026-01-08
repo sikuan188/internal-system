@@ -1,0 +1,58 @@
+/* Dashboard.css */
+
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* 改為 min-height 而不是固定 height */
+  /* 移除 overflow: auto，讓整個頁面可以自然滾動 */
+}
+
+.dashboard-content {
+  padding: 16px;
+  flex-grow: 1;
+  display: flex; /* Changed to flex to allow grid container to grow */
+  flex-direction: column; /* Stack header and grid container vertically */
+  /* 移除 overflow: auto，讓內容可以自然延展 */
+}
+
+.dashboard-grid-container {
+  flex-grow: 1; /* Allow grid to take available space */
+  display: flex; /* Use flex for grid container for better child sizing */
+  /* overflow: hidden; /* Let children handle their own scroll */
+}
+
+/* .left-column and .right-column styles are now primarily handled by sx props in Dashboard.js for better dynamic control */
+/* However, you can keep base styles or fallbacks here if needed */
+.left-column {
+  /* Base styles if any - sx props will override */
+}
+
+.right-column {
+  /* Base styles if any - sx props will override */
+}
+
+/* FilterSection specific styles */
+.filter-section-container {
+  margin-bottom: 16px;
+}
+
+.filter-grid-item {
+  display: flex;
+  align-items: center; /* Align items vertically */
+  margin-bottom: 8px; /* Add some space between filter rows */
+}
+
+.filter-form-label {
+  margin-right: 8px;
+  min-width: 80px; /* Give labels a minimum width */
+}
+
+.filter-slider {
+  width: 100%; /* Make slider take full width of its container */
+  max-width: 300px; /* Or a specific max-width as requested */
+  margin-left: 8px;
+}
+
+.search-bar-in-filter {
+  margin-bottom: 16px; /* Space below search bar */
+}

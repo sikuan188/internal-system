@@ -1,0 +1,104 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static %}
+
+{% block title %}批量上傳員工照片{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label='staff_management' %}">Staff Management</a>
+    &rsaquo; <a href="{% url 'admin:staff_management_staffprofile_changelist' %}">教職員基本資料</a>
+    &rsaquo; 批量上傳員工照片
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <h1>批量上傳員工照片</h1>
+    
+    <div class="module aligned">
+        <div class="form-row">
+            <p><strong>使用說明：</strong></p>
+            <ul>
+                <li>請將員工照片按員工編號命名，例如：ST001.jpg、ST002.png</li>
+                <li>支持的格式：JPG、JPEG、PNG、GIF</li>
+                <li>建議照片尺寸：800x600像素以內，文件大小不超過2MB</li>
+                <li>檔案名格式：{員工編號}.{副檔名} 或 {員工編號}_photo.{副檔名}</li>
+                <li>如果員工編號不存在，該照片會被跳過</li>
+                <li>如果員工已有照片，新照片會覆蓋舊照片</li>
+            </ul>
+        </div>
+        
+        <form method="post" enctype="multipart/form-data" class="module aligned">
+            {% csrf_token %}
+            
+            <div class="form-row">
+                <div>
+                    <label for="id_photos" class="required">選擇照片文件：</label>
+                    <input type="file" name="photos" id="id_photos" 
+                           accept="image/*" multiple required>
+                    <p class="help">可同時選擇多個照片文件。支持 JPG、PNG、GIF 格式。</p>
+                </div>
+            </div>
+            
+            <div class="submit-row">
+                <input type="submit" value="開始上傳" class="default" name="_save">
+                <a href="{% url 'admin:staff_management_staffprofile_changelist' %}" class="button cancel-link">取消</a>
+            </div>
+        </form>
+        
+        <div class="form-row">
+            <h3>命名示例：</h3>
+            <div style="background: #f9f9f9; padding: 10px; border-radius: 4px; border: 1px solid #ddd;">
+                <p><strong>正確格式：</strong></p>
+                <ul style="margin: 5px 0;">
+                    <li><code>ST001.jpg</code> → 匹配員工編號 ST001</li>
+                    <li><code>ST002_photo.png</code> → 匹配員工編號 ST002</li>
+                    <li><code>ADMIN001.jpeg</code> → 匹配員工編號 ADMIN001</li>
+                </ul>
+                <p><strong>錯誤格式：</strong></p>
+                <ul style="margin: 5px 0; color: #cc0000;">
+                    <li><code>照片_ST001.jpg</code> → ❌ 無法識別員工編號</li>
+                    <li><code>ST001_大頭照_2024.jpg</code> → ❌ 格式複雜</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+.module {
+    margin: 0 0 10px 0;
+    border-radius: 4px;
+}
+.form-row div {
+    margin: 0 0 10px 0;
+}
+.help {
+    font-size: 11px;
+    color: #666;
+    margin: 2px 0 0 0;
+}
+.submit-row {
+    margin-top: 20px;
+    padding: 12px 14px;
+    border-top: 1px solid #eee;
+}
+.cancel-link {
+    margin-left: 10px;
+    text-decoration: none;
+    color: #666;
+}
+code {
+    background: #e8e8e8;
+    padding: 2px 4px;
+    border-radius: 2px;
+    font-family: monospace;
+    color: #333;
+    border: 1px solid #ccc;
+}
+</style>
+{% endblock %}

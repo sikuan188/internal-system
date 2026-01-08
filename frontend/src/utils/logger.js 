@@ -1,0 +1,78 @@
+// 可以創建一個新的工具文件，例如 src/utils/logger.js
+
+/**
+ * 將日誌事件發送到後端 API
+ * @param {string} level - 日誌級別 ('info', 'warning', 'error', 'debug')
+ * @param {string} message - 日誌消息
+ * @param {object} [details={}] - 額外的詳細信息對象
+ */
+async function sendLogToBackend(level, message, details = {}) {
+    // 在開發環境下，仍然在控制台打印一份，方便調試
+    if (process.env.NODE_ENV === 'development') {
+        const consoleMethod = console[level] || console.log;
+        consoleMethod(`[Frontend ${level.toUpperCase()}] ${message}`, details);
+    }
+
+    try {
+        await fetch('/api/log-frontend-event/', { // 與後端 URL 匹配
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                // 如果您的 API 需要 CSRF token 並且您沒有在後端豁免它，
+                // 您需要在這裡添加獲取和發送 CSRF token 的邏輯
+            },
+            body: JSON.stringify({ level, message, details }),
+        });
+    } catch (error) {
+        // 如果發送日誌本身失敗，在控制台記錄這個錯誤
+        console.error('Failed to send log to backend:', error);
+    }
+}
+
+// 導出不同級別的日誌函數
+export const logger = {
+    info: (message, details) => sendLogToBackend('info', message, details),
+    warn: (message, details) => sendLogToBackend('warning', message, details),
+    error: (message, details) => sendLogToBackend('error', message, details),
+    debug: (message, details) => sendLogToBackend('debug', message, details),
+};
+
+
+// 可以創建一個新的工具文件，例如 src/utils/logger.js
+
+/**
+ * 將日誌事件發送到後端 API
+ * @param {string} level - 日誌級別 ('info', 'warning', 'error', 'debug')
+ * @param {string} message - 日誌消息
+ * @param {object} [details={}] - 額外的詳細信息對象
+ */
+async function sendLogToBackend(level, message, details = {}) {
+    // 在開發環境下，仍然在控制台打印一份，方便調試
+    if (process.env.NODE_ENV === 'development') {
+        const consoleMethod = console[level] || console.log;
+        consoleMethod(`[Frontend ${level.toUpperCase()}] ${message}`, details);
+    }
+
+    try {
+        await fetch('/api/log-frontend-event/', { // 與後端 URL 匹配
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                // 如果您的 API 需要 CSRF token 並且您沒有在後端豁免它，
+                // 您需要在這裡添加獲取和發送 CSRF token 的邏輯
+            },
+            body: JSON.stringify({ level, message, details }),
+        });
+    } catch (error) {
+        // 如果發送日誌本身失敗，在控制台記錄這個錯誤
+        console.error('Failed to send log to backend:', error);
+    }
+}
+
+// 導出不同級別的日誌函數
+export const logger = {
+    info: (message, details) => sendLogToBackend('info', message, details),
+    warn: (message, details) => sendLogToBackend('warning', message, details),
+    error: (message, details) => sendLogToBackend('error', message, details),
+    debug: (message, details) => sendLogToBackend('debug', message, details),
+};

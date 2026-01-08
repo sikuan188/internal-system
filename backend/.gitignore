@@ -1,0 +1,36 @@
+# Log files
+logs/
+*.log
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django specific
+db.sqlite3
+.env
+
+# IDE / Editor specific
+.vscode/
+.idea/
+*.swp
+
+
+# Log files
+logs/
+*.log
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django specific
+db.sqlite3
+.env
+
+# IDE / Editor specific
+.vscode/
+.idea/
+*.swp

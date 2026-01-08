@@ -1,0 +1,212 @@
+# 培正中學員工管理系統 (PCMS Staff Management System)
+# Docker Compose 配置文件 - 更新版
+# 
+# 用途：協調前端、後端、Nginx反向代理和數據庫的容器化部署
+# 開發和生產環境通用配置
+#
+# 使用方法：
+#   開發環境：docker-compose up --build
+#   後台運行：docker-compose up -d --build
+#   停止服務：docker-compose down
+#   清除數據：docker-compose down -v
+#   查看日誌：docker-compose logs -f
+#   重建服務：docker-compose up --build --force-recreate
+#
+# version field removed - no longer required in Docker Compose v2+
+
+services:
+  # =================================================================
+  # 後端服務 (Django REST Framework API)
+  # =================================================================
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+      target: development  # 使用開發環境構建
+    container_name: pcms_staff_backend
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      # 代碼熱重載
+      - ../backend:/app:cached
+      # 媒體文件共享給Nginx
+      - backend_media:/app/media
+      # 靜態文件共享給Nginx  
+      - backend_static:/app/staticfiles
+      # 日誌目錄
+      - ../backend/logs:/app/logs:cached
+      # 備份輸出掛載到宿主機桌面（可依需要調整 BACKUP_PATH）
+      # 使用 HOST_BACKUP_PATH 環境變量，默認值為 /Users/kuan/Desktop/pcms_backup
+      - ${HOST_BACKUP_PATH:-/Users/kuan/Desktop/pcms_backup}:/app/backup
+    # ports:
+      # 直接暴露後端端口（用於開發調試）- 生產環境關閉
+      # - "8000:8000"
+    environment:
+      - PYTHONPATH=/app
+      - DJANGO_SETTINGS_MODULE=pcms_staff.settings
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+      - BACKUP_PATH=/app/backup
+    env_file:
+      - ../backend/.env
+    depends_on:
+      - mysql
+    networks:
+      - app-network
+    restart: unless-stopped
+    # 健康檢查
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/admin/", "-o", "/dev/null"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # =================================================================
+  # 前端服務 (React.js 應用) - 生產構建
+  # =================================================================
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+      target: production  # 使用生產環境構建
+    container_name: pcms_staff_frontend
+    volumes:
+      # 將構建後的文件共享給主Nginx
+      - frontend_build:/usr/share/nginx/html
+    depends_on:
+      - backend
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # =================================================================
+  # MySQL 數據庫服務
+  # =================================================================
+  mysql:
+    image: mysql:8.0
+    container_name: pcms_staff_mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: pcms_staff_db
+      MYSQL_USER: pcms_admin
+      MYSQL_PASSWORD: pcms_admin
+      MYSQL_ROOT_PASSWORD: pcms_root_admin
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-ppcms_root_admin"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # =================================================================
+  # Nginx 反向代理服務
+  # =================================================================
+  nginx:
+    image: nginx:stable-alpine
+    container_name: pcms_staff_nginx_proxy
+    ports:
+      - "443:443"
+    volumes:
+      # Nginx HTTPS 配置
+      - ./nginx/default-https.conf:/etc/nginx/conf.d/default.conf:ro
+      
+      # 前端靜態文件
+      - frontend_build:/usr/share/nginx/html:ro
+      
+      # 後端靜態文件（Django Admin等）
+      - backend_static:/usr/share/nginx/django_static:ro
+      # 後端媒體文件（員工照片等）獨立掛載，避免與前端靜態目錄衝突
+      - backend_media:/usr/share/nginx/media:ro
+      
+      # SSL 證書配置 (生產環境)
+      - ./ssl/self-signed:/etc/nginx/ssl:ro
+      
+      # Nginx 日誌
+      - nginx_logs:/var/log/nginx
+    depends_on:
+      backend:
+        condition: service_started
+      frontend:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+
+  # =================================================================
+  # 用戶初始化服務（可選）
+  # =================================================================
+  init_users:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+      target: development
+    container_name: pcms_staff_init_users
+    command: ./init_users.sh
+    environment:
+      - CREATE_TEST_DATA=true
+      - PYTHONPATH=/app
+      - DJANGO_SETTINGS_MODULE=pcms_staff.settings
+    env_file:
+      - ../backend/.env
+    volumes:
+      - ../backend:/app:cached
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: "no"  # 只運行一次
+
+# =================================================================
+# Docker 卷定義
+# =================================================================
+volumes:
+  # MySQL 数据库持久化存储
+  mysql_data:
+    driver: local
+
+  # 前端構建文件
+  frontend_build:
+    driver: local
+
+  # 後端靜態文件
+  backend_static:
+    driver: local
+
+  # 後端媒體文件  
+  backend_media:
+    driver: local
+
+  # Nginx 日誌
+  nginx_logs:
+    driver: local
+
+# =================================================================
+# Docker 網絡定義
+# =================================================================
+networks:
+  app-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16
+          gateway: 172.20.0.1

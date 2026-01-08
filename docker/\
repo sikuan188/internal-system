@@ -1,0 +1,23 @@
+##
+# Host Database
+#
+# localhost is used to configure the loopback interface
+# when the system is booting.  Do not change this entry.
+##
+127.0.0.1	localhost
+255.255.255.255	broadcasthost
+::1             localhost
+
+#PCMS HR SYSTEM
+172.188.118.42	pcmshrsystem
+172.188.118.42	pcms-staff.local
+172.188.118.42	pcmshrsys
+
+#NAS
+172.188.118.238	pcmd-dcmd
+172.188.118.238	pcms-dcmd
+
+# Added by Docker Desktop
+# To allow the same kube context to work on the host and the container:
+127.0.0.1 kubernetes.docker.internal
+# End of section

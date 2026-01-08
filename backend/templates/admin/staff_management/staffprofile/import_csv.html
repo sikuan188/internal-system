@@ -1,0 +1,77 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static %}
+
+{% block title %}批量導入員工資料{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label='staff_management' %}">Staff Management</a>
+    &rsaquo; <a href="{% url 'admin:staff_management_staffprofile_changelist' %}">教職員基本資料</a>
+    &rsaquo; 批量導入員工資料
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <h1>批量導入員工資料</h1>
+    
+    <div class="module aligned">
+        <div class="form-row">
+            <p><strong>使用說明：</strong></p>
+            <ul>
+                <li>請先<a href="/static/import_data_format_sample_utf8_bom.csv" download>下載CSV模板</a>並按照格式填寫員工資料</li>
+                <li>支持匯入完整的員工信息，包括個人資料、教育背景、工作經驗、專業資格等</li>
+                <li>員工編號必須唯一，重複的編號會覆蓋現有資料</li>
+                <li>日期格式支持：YYYY-MM-DD、YYYY/MM/DD、YYYY年MM月DD日</li>
+                <li>導入後可在員工列表中查看結果</li>
+            </ul>
+        </div>
+        
+        <form method="post" enctype="multipart/form-data" class="module aligned">
+            {% csrf_token %}
+            
+            <div class="form-row">
+                <div>
+                    <label for="id_csv_file" class="required">選擇CSV文件：</label>
+                    <input type="file" name="csv_file" id="id_csv_file" accept=".csv" required>
+                    <p class="help">支持的格式：CSV文件（UTF-8編碼）</p>
+                </div>
+            </div>
+            
+            <div class="submit-row">
+                <input type="submit" value="開始導入" class="default" name="_save">
+                <a href="{% url 'admin:staff_management_staffprofile_changelist' %}" class="button cancel-link">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+.module {
+    margin: 0 0 10px 0;
+    border-radius: 4px;
+}
+.form-row div {
+    margin: 0 0 10px 0;
+}
+.help {
+    font-size: 11px;
+    color: #666;
+    margin: 2px 0 0 0;
+}
+.submit-row {
+    margin-top: 20px;
+    padding: 12px 14px;
+    border-top: 1px solid #eee;
+}
+.cancel-link {
+    margin-left: 10px;
+    text-decoration: none;
+    color: #666;
+}
+</style>
+{% endblock %}

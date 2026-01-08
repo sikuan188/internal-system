@@ -1,0 +1,68 @@
+# 虛擬環境和依賴包
+venv/
+env/
+.venv/
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+
+# 日志文件
+*.log
+logs/
+
+# 數據庫文件
+*.sqlite3
+*.db
+db.sqlite3
+
+# 靜態文件構建輸出
+backend/staticfiles/
+
+# 媒體上傳文件
+backend/media/staff_photos/*
+\!backend/media/staff_photos/.gitkeep
+
+# 前端構建輸出
+frontend/build/
+frontend/dist/
+
+# 系統文件
+.DS_Store
+Thumbs.db
+
+# 臨時文件
+.tmp/
+tmp/
+temp/
+
+# Git
+.git/
+
+# 構建文件
+*.tar.gz
+*.zip
+
+# 緩存
+.cache/
+.npm/
+.yarn-integrity
+
+# IDE
+.vscode/
+.idea/
+
+# 測試
+.coverage
+htmlcov/
+
+# 環境配置（除了主要的.env）
+.env.local
+.env.development
+frontend/.env*
+
+# 排除規則文件本身
+.complete-exclude
+.windows-exclude
+.tarball-exclude
+EOF < /dev/null

@@ -1,0 +1,244 @@
+# 培正中學員工管理系統 (PCMS Staff Management System)
+# Windows 優化的 Docker Compose 配置文件
+# 
+# 用途：專為Windows Docker Desktop環境優化的容器化部署
+# 特點：路徑兼容、權限優化、性能調整
+#
+# 使用方法：
+#   Windows 部署：docker-compose -f docker-compose.windows.yml up -d --build
+#   停止服務：docker-compose -f docker-compose.windows.yml down
+#
+# version field removed - no longer required in Docker Compose v2+
+
+services:
+  # =================================================================
+  # 後端服務 (Django REST Framework API)
+  # =================================================================
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+      target: development
+    container_name: pcms_staff_backend
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      # Windows 路徑掛載 - 使用相對路徑和cached模式優化性能
+      - ../backend:/app:cached
+      # 媒體文件共享給Nginx
+      - backend_media:/app/media
+      # 靜態文件共享給Nginx
+      - backend_static:/app/staticfiles
+      # 日誌目錄
+      - ../backend/logs:/app/logs:cached
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONPATH=/app
+      - DJANGO_SETTINGS_MODULE=pcms_staff.settings
+      # Windows 特定環境變量
+      - PYTHONIOENCODING=utf-8
+      - LANG=C.UTF-8
+      # SSL 環境變量
+      - HTTPS_ENABLED=true
+      - SECURE_SSL_REDIRECT=false
+    env_file:
+      - ../backend/.env
+    depends_on:
+      - mysql
+    networks:
+      - app-network
+    restart: unless-stopped
+    # 健康檢查
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # =================================================================
+  # 前端服務 (React.js 應用)
+  # =================================================================
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+      target: production
+    container_name: pcms_staff_frontend
+    volumes:
+      # 將構建後的文件共享給主Nginx
+      - frontend_build:/usr/share/nginx/html:ro
+    depends_on:
+      - backend
+    networks:
+      - app-network
+    restart: unless-stopped
+    # 健康檢查
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:80/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  # =================================================================
+  # Nginx 反向代理服務
+  # =================================================================
+  nginx:
+    image: nginx:stable-alpine
+    container_name: pcms_staff_nginx_proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      # Windows 路徑掛載 - 只讀掛載優化安全性
+      - ./nginx/default-https.conf:/etc/nginx/conf.d/default.conf:ro
+      # SSL 證書
+      - ./ssl/self-signed:/etc/nginx/ssl:ro
+      # 前端構建文件
+      - frontend_build:/usr/share/nginx/html:ro
+      # 後端靜態文件（Django Admin等）
+      - backend_static:/usr/share/nginx/html/static:ro
+      # 後端媒體文件
+      - backend_media:/usr/share/nginx/html/media:ro
+      # Nginx 日誌
+      - nginx_logs:/var/log/nginx
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - app-network
+    restart: unless-stopped
+    # 健康檢查
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "https://localhost/", "--no-check-certificate"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # =================================================================
+  # MySQL 數據庫服務 (Windows 優化版本)
+  # =================================================================
+  mysql:
+    image: mysql:8.0
+    container_name: pcms_staff_mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: pcms_staff_db
+      MYSQL_USER: pcms_admin
+      MYSQL_PASSWORD: pcms_admin
+      MYSQL_ROOT_PASSWORD: pcms_root_admin
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-ppcms_root_admin"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # =================================================================
+  # 用戶初始化服務 (Windows 版本)
+  # =================================================================
+  init_users:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+      target: development
+    container_name: pcms_staff_init_users
+    command: ./init_users.sh
+    environment:
+      - CREATE_TEST_DATA=true
+      - PYTHONPATH=/app
+      - DJANGO_SETTINGS_MODULE=pcms_staff.settings
+      # Windows 環境變量
+      - PYTHONIOENCODING=utf-8
+      - LANG=C.UTF-8
+    env_file:
+      - ../backend/.env
+    volumes:
+      - ../backend:/app:cached
+    depends_on:
+      backend:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: "no"
+
+# =================================================================
+# Docker 卷定義 - Windows 優化
+# =================================================================
+volumes:
+  # MySQL 數據庫持久化存儲
+  mysql_data:
+    driver: local
+
+  # 前端構建文件
+  frontend_build:
+    driver: local
+
+  # 後端靜態文件
+  backend_static:
+    driver: local
+
+  # 後端媒體文件
+  backend_media:
+    driver: local
+
+  # Nginx 日誌
+  nginx_logs:
+    driver: local
+
+# =================================================================
+# Docker 網絡定義 - Windows 優化
+# =================================================================
+networks:
+  app-network:
+    driver: bridge
+    # Windows 網絡配置優化
+    driver_opts:
+      com.docker.network.bridge.enable_ip_masquerade: 'true'
+      com.docker.network.bridge.enable_icc: 'true'
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16
+          gateway: 172.20.0.1
+
+# =================================================================
+# Windows 特定配置說明
+# =================================================================
+#
+# 1. 路徑掛載：
+#    - 使用相對路徑避免Windows絕對路徑問題
+#    - 使用:cached標記優化文件系統性能
+#
+# 2. 權限處理：
+#    - Alpine容器自動處理Windows權限映射
+#    - 避免Linux權限與Windows權限衝突
+#
+# 3. 網絡配置：
+#    - 啟用IP偽裝和容器間通信
+#    - 使用固定子網避免網絡衝突
+#
+# 4. 健康檢查：
+#    - 增加start_period給予容器足夠啟動時間
+#    - Windows環境下容器啟動通常較慢
+#
+# 5. 環境變量：
+#    - 設置UTF-8編碼確保中文支持
+#    - Windows特定的Python環境變量
+#
+# 6. 故障排除：
+#    - 如遇權限問題：重啟Docker Desktop
+#    - 如遇網絡問題：docker network prune
+#    - 如遇卷問題：docker volume prune
+#
+# =================================================================

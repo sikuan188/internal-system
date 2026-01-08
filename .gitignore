@@ -1,0 +1,174 @@
+# ========================
+# 通用忽略规则
+# ========================
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.swp
+*~
+~$*
+# .env  # 保留.env文件
+.venv
+.env.local
+.env.development
+.env.production
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ========================
+# Python 相关
+# ========================
+# Django
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.pyc
+*.pyo
+*.pyd
+celerybeat-schedule
+
+# Virtual Environment
+venv/
+.venv/
+ENV/
+env/
+
+# Coverage
+.coverage
+htmlcov/
+
+# Unit Test
+.pytest_cache/
+
+# ========================
+# Node.js/React 相关
+# ========================
+node_modules/
+dist/
+build/
+.cache/
+.next/
+out/
+
+# Bundler
+.webpack/
+.parcel-cache/
+
+# ========================
+# IDE 和编辑器
+# ========================
+# VS Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# JetBrains
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# ========================
+# 数据库和备份
+# ========================
+# SQLite
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# 备份文件
+*.bak
+*.backup
+
+# ========================
+# Docker 相关
+# ========================
+docker-compose.override.yml
+docker-data/
+
+# ========================
+# 项目特定忽略（根据您的结构）
+# ========================
+# 后端
+# backend/staticfiles/
+# backend/media/
+
+# 前端
+frontend/.eslintcache
+frontend/.stylelintcache
+
+# ========================
+# Log files / 日誌文件
+# ========================
+logs/
+*.log
+backend/logs/
+backend/*.log
+# logs/
+# audit/
+
+# Docker部署包和測試文件（避免大文件提交）
+docker/pcms-deployment-*/
+docker/*-deployment-*.tar.gz
+docker/*-deployment-*.tar
+docker-images-export/
+*deployment*.tar.gz
+*deployment*.tar
+*.tar.gz
+*.tar
+
+# MCP Chrome臨時文件
+mcp-chrome-temp/
+
+# 員工照片（大文件）
+backend/staff_photos/*.jpg
+backend/staff_photos/*.jpeg
+backend/staff_photos/*.png
+backend/staff_photos/*.gif
+
+# 測試數據文件
+test_*.csv
+test_*.xlsx
+test_*.xls
+
+# 證書和密鑰
+docker/ssl/*.key
+docker/ssl/*.pem
+docker/ssl/*.crt
+
+
+# 构建和缓存文件
+frontend/build/
+backend/staticfiles/
+__pycache__/
+*.pyc
+*.pyo
+
+# 日志文件
+*.log
+logs/
+*.log.*
+
+# 部署包
+*.tar.gz
+*-deployment-*.tar.gz
+
+# 数据库文件(开发用)
+*.sqlite3
+
+# 临时文件
+*-temp/
+temp/
+
+# IDE和系统文件
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo

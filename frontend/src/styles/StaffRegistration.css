@@ -1,0 +1,313 @@
+/* ==========================================
+   員工入職申請表樣式 - 增強版
+   ========================================== */
+
+/* 主容器樣式 */
+.staff-registration-container {
+  max-width: 1000px; /* 稍微放大容器寬度 */
+  margin: auto;
+  padding: 32px 24px; /* 增加上下間距 */
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+  font-family: 'Arial', 'Microsoft YaHei', '微軟雅黑', sans-serif;
+}
+
+/* 主標題樣式 */
+.staff-registration-title {
+  color: #1e3a8a; /* 更深的藍色 */
+  text-align: center;
+  margin-bottom: 40px;
+  font-weight: 600;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  font-size: 2.5rem;
+}
+
+/* 主要表單Paper容器 */
+.staff-registration-paper {
+  padding: 32px;
+  margin-bottom: 24px;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12) !important;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.staff-registration-paper:hover {
+  box-shadow: 0 12px 40px rgba(0,0,0,0.15) !important;
+  transform: translateY(-2px);
+}
+
+/* 區段標題樣式 */
+.staff-registration-section-title {
+  margin-bottom: 24px;
+  color: #374151;
+  font-weight: 600;
+  font-size: 1.25rem;
+  border-left: 4px solid #3b82f6;
+  padding-left: 16px;
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.1) 0%, transparent 100%);
+  padding: 12px 16px;
+  border-radius: 0 8px 8px 0;
+}
+
+/* 表單網格樣式 */
+.staff-registration-form-grid .MuiGrid-item {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  transition: all 0.2s ease;
+}
+
+/* TextField樣式增強 */
+.staff-registration-form-grid .MuiTextField-root {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  transition: all 0.2s ease;
+}
+
+.staff-registration-form-grid .MuiTextField-root .MuiOutlinedInput-root {
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.staff-registration-form-grid .MuiTextField-root .MuiOutlinedInput-root:hover {
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+}
+
+.staff-registration-form-grid .MuiTextField-root .MuiOutlinedInput-root.Mui-focused {
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+/* 錯誤狀態樣式 */
+.staff-registration-form-grid .MuiTextField-root .MuiOutlinedInput-root.Mui-error {
+  background-color: rgba(239, 68, 68, 0.05);
+  border-color: #ef4444;
+}
+
+.staff-registration-form-grid .MuiTextField-root .MuiFormHelperText-root.Mui-error {
+  background-color: rgba(239, 68, 68, 0.1);
+  padding: 4px 8px;
+  margin: 4px 0;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+/* Select組件樣式 */
+.staff-registration-form-grid .MuiFormControl-root .MuiSelect-root {
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.staff-registration-form-grid .MuiFormControl-root .MuiSelect-root:hover {
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+}
+
+/* Checkbox樣式 */
+.staff-registration-form-grid .MuiFormControlLabel-root {
+  margin: 8px 0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background-color: rgba(59, 130, 246, 0.05);
+  transition: all 0.2s ease;
+}
+
+.staff-registration-form-grid .MuiFormControlLabel-root:hover {
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+/* 主提交按鈕樣式 */
+.staff-registration-button {
+  margin-top: 32px !important;
+  padding: 16px 32px !important;
+  border-radius: 12px !important;
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4) !important;
+  background: linear-gradient(45deg, #3b82f6 30%, #1d4ed8 90%) !important;
+  transition: all 0.3s ease !important;
+}
+
+.staff-registration-button:hover {
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6) !important;
+  transform: translateY(-2px);
+}
+
+.staff-registration-button:disabled {
+  background: #9ca3af !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* 子區段Paper樣式（家庭成員、學歷等） */
+.staff-registration-paper .MuiPaper-root {
+  border-radius: 12px;
+  border: 2px solid rgba(59, 130, 246, 0.1);
+  background: rgba(255, 255, 255, 0.8);
+  transition: all 0.2s ease;
+}
+
+.staff-registration-paper .MuiPaper-root:hover {
+  border-color: rgba(59, 130, 246, 0.3);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+/* 移除按鈕樣式 */
+.staff-registration-remove-button {
+  margin-top: 16px !important;
+  border-radius: 8px !important;
+  text-transform: none !important;
+  font-weight: 500 !important;
+}
+
+/* 添加按鈕樣式 */
+.MuiButton-outlined {
+  border-radius: 8px !important;
+  text-transform: none !important;
+  font-weight: 500 !important;
+  border-width: 2px !important;
+  transition: all 0.2s ease !important;
+}
+
+.MuiButton-outlined:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* 分隔線樣式 */
+.MuiDivider-root {
+  margin: 32px 0 !important;
+  background: linear-gradient(90deg, transparent, #e5e7eb, transparent) !important;
+  height: 2px !important;
+}
+
+/* 版權頁腳樣式 */
+.staff-registration-container .MuiTypography-body2 {
+  background: rgba(255, 255, 255, 0.8);
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+  backdrop-filter: blur(5px);
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+  .staff-registration-container {
+    padding: 16px 12px;
+    max-width: 100%;
+  }
+  
+  .staff-registration-paper {
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  
+  .staff-registration-title {
+    font-size: 2rem;
+    margin-bottom: 24px;
+  }
+  
+  .staff-registration-form-grid .MuiGrid-item {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+}
+
+/* 載入狀態動畫 */
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.staff-registration-button:disabled {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* 進度指示器樣式 */
+.staff-registration-container .MuiLinearProgress-root {
+  background-color: rgba(59, 130, 246, 0.2) !important;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.staff-registration-container .MuiLinearProgress-bar {
+  background: linear-gradient(45deg, #3b82f6 30%, #1d4ed8 90%) !important;
+  border-radius: 4px;
+  transition: transform 0.4s ease !important;
+}
+
+/* 提交進度容器動畫 */
+.staff-registration-container .MuiFade-root {
+  background: rgba(59, 130, 246, 0.05);
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+/* Snackbar 消息樣式 */
+.staff-registration-container .MuiSnackbar-root {
+  z-index: 9999 !important;
+}
+
+.staff-registration-container .MuiAlert-root {
+  border-radius: 12px !important;
+  font-weight: 500 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+.staff-registration-container .MuiAlert-standardSuccess {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.9) 0%, rgba(5, 150, 105, 0.9) 100%) !important;
+  color: white !important;
+}
+
+.staff-registration-container .MuiAlert-standardError {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.9) 0%, rgba(220, 38, 38, 0.9) 100%) !important;
+  color: white !important;
+}
+
+/* 表單焦點指示器 */
+.staff-registration-form-grid .MuiTextField-root .MuiInputLabel-root.Mui-focused,
+.staff-registration-form-grid .MuiFormControl-root .MuiInputLabel-root.Mui-focused {
+  color: #1d4ed8 !important;
+  font-weight: 600;
+}
+
+/* 成功狀態樣式 */
+.staff-registration-success {
+  border-left: 4px solid #10b981;
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.1) 0%, transparent 100%);
+  padding: 12px 16px;
+  border-radius: 0 8px 8px 0;
+  color: #065f46;
+  margin: 16px 0;
+}
+
+/* 無障礙改善 */
+.staff-registration-container *:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* 高對比度模式支持 */
+@media (prefers-contrast: high) {
+  .staff-registration-container {
+    background: #ffffff;
+  }
+  
+  .staff-registration-paper {
+    border: 2px solid #000000;
+    background: #ffffff;
+  }
+  
+  .staff-registration-title {
+    color: #000000;
+  }
+}
